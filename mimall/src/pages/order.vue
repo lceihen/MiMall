@@ -7,9 +7,10 @@
 </template>
 <script>
 import NavFooter from './../components/NavFooter';
+import OrderHeader from './../components/Order-Header';
 export default {
   name:'order',
-  components: {NavFooter},
+  components: {NavFooter,OrderHeader},
     
 }
 </script>
