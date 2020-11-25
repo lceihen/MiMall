@@ -1,15 +1,15 @@
-// module.exports={
-//     devServer:{
-//         host:'localhost',
-//         port:8080,
-//         proxy:{
-//             '/activity':{
-//                 target:'https://www.imooc.com',
-//                 changeOrigin:true,
-//                 pathRewrite:{
-//                     'activity':'/activity'
-//                 }
-//             }
-//         }
-//     }
-// }
+module.exports={
+    devServer:{
+        host:'localhost',
+        port:8080,
+        proxy:{
+            '/api':{
+                target:'https://mall-pre.springboot.cn',
+                changeOrigin:true,
+                pathRewrite:{
+                    'api':'/'
+                }
+            }
+        }
+    }
+}

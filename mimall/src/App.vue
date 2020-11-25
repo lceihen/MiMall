@@ -34,9 +34,7 @@ export default {
 // });
   },
   methods:{
-    getaxios(){
-console.log(this.res)
-    }
+
   }
 }
 </script>
