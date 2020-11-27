@@ -8,6 +8,7 @@
     display: inline-block;
     width: $w;
     height: $h;
-    background-size: $size;
+   
     background: url($img) no-repeat center;
+     background-size: $size;
 }
