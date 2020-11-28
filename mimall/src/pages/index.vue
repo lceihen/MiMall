@@ -60,13 +60,13 @@
       </div>
       <div class="ads-box">
         <a :href="'/#/product/'+item.id" v-for="(item,index) in adsList" :key="index">
-        <img :src="item.img" alt="">
+        <img v-lazy="item.img" alt="">
         </a>
      
       </div>
       <div class="banner">
         <a href="'/#/product/30'">
-        <img src="/imgs/banner-1.png" alt="">
+        <img v-lazy="'/imgs/banner-1.png'" alt="">
         </a>
       </div>
       
@@ -76,17 +76,17 @@
               <h2>手机</h2>
       <div class="wrapper">
         <div class="banner-left">
-          <a href="/#/product/35"><img src="/imgs/mix-alpha.jpg" alt=""></a>
+          <a href="/#/product/35"><img v-lazy="'/imgs/mix-alpha.jpg'" alt=""></a>
         </div>
         <div class="list-box">
           <div class="list" v-for="(arr,index) in phoneList" :key="index">
             <div class="item" v-for="(item,i) in arr" :key="i">
               <span :class="{'new-pro':i%2==0}">新品</span>
-              <div class="item-img"><img :src="item.mainImage" alt=""></div>
+              <div class="item-img"><img v-lazy="item.mainImage" alt=""></div>
               <div class="item-info">
                 <h3>{{item.name}}</h3>
                 <p>{{item.subtitle}}</p>
-                <p class="price">{{item.price}}元</p>
+                <p class="price" @click="addCart(item.id)">{{item.price}}元</p>
               </div>
             </div>
           </div>
@@ -96,8 +96,8 @@
 
       </div>
     <service-bar> </service-bar>
-    <modal title="提示" sureText="查看购物车" btnType='1' modalType="middle"
-    :showModal="showModal">
+    <modal title="提示" sureText="查看购物车" btnType="1" modalType="middle"
+    :showModal="showModal" @submit="goToCart()" @cancel="showModal=false">
     <template v-slot:body>
       <p>商品添加成功</p>
     </template>
@@ -120,7 +120,7 @@ export default {
   },
   data() {
     return {
-      showModal:true,
+      showModal:false,
       swiperOption: {
         autoplay: true,
         loop: true,
@@ -333,9 +333,24 @@ pageSize:14
 this.phoneList=[res.list.slice(0,4),res.list.slice(4,8)]
 //console.log("phonelist",this.phoneList);
  })
+},
+addCart(){
+  this.showModal=true;
+  return;
+  // Axios.post('/carts',{
+  //   productId:id,
+  //   selected:true
+  // }).then(()=>{
+
+  // }).catch(()=>{
+  //   this.showModal=true;
+  // });
+},
+goToCart(){
+  this.$router.push('/cart');
 }
-  }
-};
+}
+}
 </script>
 <style lang="scss" scoped>
 @import '../assets/scss/mixin.scss';
