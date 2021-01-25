@@ -83,8 +83,8 @@ export default {
       axios
         .post("/user/register", {
           username: this.username,
-          password: this.id,
-          email: "admin12@163.com",
+          password: this.password,
+          email: "lceihen2@163.com",
         })
         .then(() => {
           alert("注册成功");
