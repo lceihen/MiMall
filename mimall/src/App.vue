@@ -34,13 +34,14 @@ export default {
   },
   methods: {
     getUser() {
-      axios.get("/user").then((res) => {
+      axios.get("/user").then((res = {}) => {
+        // console.log(res);
         this.$store.dispatch("saveUserName", res.username);
       });
     },
 
     getCartCount() {
-      axios.get("/carts/products/sum").then((res) => {
+      axios.get("/carts/products/sum").then((res = 0) => {
         this.$store.dispatch("saveCartCount", res);
       });
     },

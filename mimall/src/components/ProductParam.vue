@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar" :class="{ is_fixed: isFixed }">
     <div class="container">
-      <div class="pro-title">小米8</div>
+      <div class="pro-title">{{ title }}</div>
       <div class="pro-param">
         <a href="">概述</a><span>|</span> <a href="">参数</a><span>|</span>
         <a href="">用户评价</a>
@@ -18,6 +18,9 @@ export default {
     return {
       isFixed: false,
     };
+  },
+  props: {
+    title: String,
   },
   mounted() {
     window.addEventListener("scroll", this.initHeight, false);
@@ -41,7 +44,7 @@ export default {
   line-height: 70px;
   border-top: 1px solid $colorH;
   background-color: $colorG;
-
+  z-index: 10;
   &.is_fixed {
     position: fixed;
     top: 0;
