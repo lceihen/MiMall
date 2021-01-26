@@ -4,6 +4,8 @@ import router from './router'
 import axios from 'axios'
 import VueLazyLoad from 'vue-lazyload';
 import VueCookie from 'vue-cookie'
+import { Message } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
 // const mock=true;
 // if(mock)
@@ -11,6 +13,7 @@ import store from './store'
 //   require('../public/mock/api');
 // }
 //Vue.use(axios)
+Vue.prototype.$message = Message;
 Vue.prototype.$axios = axios;
 Vue.prototype.$ajax = axios
     //import env from './env.js';
@@ -32,7 +35,8 @@ axios.interceptors.response.use(function(response) {
         }
 
     } else {
-        alert(res.msg);
+        //  alert(res.msg);
+        Message.warning(res.msg)
         return Promise.reject(res);
     }
 });

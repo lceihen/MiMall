@@ -32,6 +32,7 @@
                 <span
                   class="checkbox"
                   :class="{ checked: item.productSelected }"
+                  @click="updataCart(item)"
                 >
                 </span>
               </div>
@@ -42,13 +43,13 @@
               <div class="item-price">{{ item.productPrice }}</div>
               <div class="item-num">
                 <div class="num-box">
-                  <a href="javascript:;">-</a>
+                  <a href="javascript:;" @click="updataCart(item, '-')">-</a>
                   <span>{{ item.quantity }}</span>
-                  <a href="javascript:;">+</a>
+                  <a href="javascript:;" @click="updataCart(item, '+')">+</a>
                 </div>
               </div>
               <div class="item-total">{{ item.productTotalPrice }}</div>
-              <div class="item-del"></div>
+              <div class="item-del" @click="delProduct(item)"></div>
             </li>
           </ul>
         </div>
@@ -62,7 +63,7 @@
           <div class="total fr">
             合计: <span>{{ cartTotalPrice }}</span
             >元
-            <a href="javascript:;" class="btn">去结算</a>
+            <a href="javascript:;" class="btn" @click="order()">去结算</a>
           </div>
         </div>
       </div>
@@ -77,6 +78,7 @@ import axios from "axios";
 import ServiceBar from "../components/ServiceBar.vue";
 import NavFooter from "./../components/NavFooter";
 import OrderHeader from "./../components/Order-Header";
+import { Message } from "element-ui";
 export default {
   name: "cart",
   components: { NavFooter, OrderHeader, ServiceBar },
@@ -92,23 +94,69 @@ export default {
     };
   },
   methods: {
+    //获取商品列表
     getCartList() {
       axios.get("/carts").then((res) => {
         this.renderData(res);
       });
     },
+    //更新购物车
+    updataCart(item, type) {
+      let quantity = item.quantity,
+        selected = item.productSelected;
+      if (type == "-") {
+        if (quantity == 1) {
+          Message.warning("商品至少保留一件");
+          //alert("商品至少保留一件");
+          return;
+        }
+        --quantity;
+      } else if (type == "+") {
+        if (quantity > item.productStock) {
+          Message.warning("商品不能超过库存数量");
+          //  alert("商品不能超过库存数量");
+          return;
+        }
+        ++quantity;
+      } else {
+        selected = !item.productSelected;
+      }
+      axios
+        .put(`/carts/${item.productId}`, { quantity, selected })
+        .then((res) => {
+          this.renderData(res);
+        });
+    },
+    //控制全选
     toggleAll() {
       let url = this.allChecked ? "/carts/unSelectAll" : "/carts/selectAll";
       axios.put(url).then((res) => {
         this.renderData(res);
       });
     },
+    //删除购物车商品
+    delProduct(item) {
+      axios.delete(`/carts/${item.productId}`).then((res) => {
+        this.$message.success("删除成功");
+        this.renderData(res);
+      });
+    },
+    //更新后的渲染
     renderData(res) {
       this.list = res.cartProductVoList || [];
       this.allChecked = res.selectedAll;
       this.cartTotalPrice = res.cartTotalPrice;
       //this.checkedNum = res.cartTotalQuantity;
       this.checkedNum = this.list.filter((item) => item.productSelected).length;
+    },
+    order() {
+      let isCheck = this.list.every((item) => !item.productSelected);
+      if (isCheck) {
+        Message.warning("请选择一件商品");
+        // alert("请选择一件商品");
+      } else {
+        this.$router.push("/order/confirm");
+      }
     },
   },
 };
