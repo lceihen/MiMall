@@ -55,6 +55,7 @@
             </div>
           </div>
           <el-pagination
+            v-if="false"
             class="pagination"
             background
             layout="prev, pager, next"
@@ -63,6 +64,12 @@
             @current-change="handleChange"
           >
           </el-pagination>
+          <div class="load-more">
+            <el-button type="primary" :loading="loading" @click="loadMore()"
+              >加载更多</el-button
+            >
+          </div>
+
           <no-data v-if="!loading && list.length == 0"></no-data>
         </div>
       </div>
@@ -73,7 +80,7 @@
 import OrderHeader from "./../components/Order-Header";
 import Loading from "./../components/Loading";
 import NoData from "./../components/NoData";
-import { Pagination } from "element-ui";
+import { Pagination, Button } from "element-ui";
 import axios from "axios";
 export default {
   name: "order-list",
@@ -82,12 +89,13 @@ export default {
     Loading,
     NoData,
     [Pagination.name]: Pagination,
+    [Button.name]: Button,
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       list: [],
-      pageSize: 10, //每页页数
+      pageSize: 2, //每页页数
       pageNum: 1, //当前页
       total: 0, //总条数
     };
@@ -97,15 +105,17 @@ export default {
   },
   methods: {
     getOrderList() {
+      this.loading = true;
       axios
         .get("/orders", {
           params: {
             pageNum: this.pageNum,
+            pageSize: 2,
           },
         })
         .then((res) => {
           this.loading = false;
-          this.list = res.list;
+          this.list = this.list.concat(res.list);
           this.total = res.total;
         })
         .catch(() => {
@@ -127,6 +137,10 @@ export default {
           orderNo,
         },
       });
+    },
+    loadMore() {
+      this.pageNum++;
+      this.getOrderList();
     },
     handleChange(pageNum) {
       console.log(pageNum);
@@ -204,6 +218,9 @@ export default {
       .el-pagination.is-background .el-pager li:not(.disabled).active {
         background-color: #ff6600;
         color: #fff;
+      }
+      .load-more {
+        text-align: center;
       }
     }
   }
