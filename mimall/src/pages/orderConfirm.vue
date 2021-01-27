@@ -1,5 +1,8 @@
 <template>
   <div class="order-confirm">
+    <order-header title="订单确认">
+      <template v-slot:tip><span>请认真填写收货地址</span></template>
+    </order-header>
     <svg
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
@@ -224,6 +227,7 @@
 <script>
 import Modal from "./../components/Modal";
 import axios from "axios";
+import OrderHeader from "./../components/Order-Header";
 export default {
   name: "order-confirm",
   data() {
@@ -241,6 +245,7 @@ export default {
   },
   components: {
     Modal,
+    OrderHeader,
   },
   mounted() {
     this.getAddressList();
