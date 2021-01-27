@@ -9,9 +9,10 @@
           <a href="javascript:;">协议</a>
         </div>
         <div class="topbar-user">
-          <a href="javascript:;" v-if="username">{{username}}</a>
-            <a href="javascript:;"  v-if="!username" @click="login">登录</a>
-          <a href="javascript:;">我的订单</a>
+          <a href="javascript:;" v-if="username">{{ username }}</a>
+          <a href="javascript:;" v-if="!username" @click="login">登录</a>
+          <a href="javascript:;" v-if="username" @click="logout">退出</a>
+          <a href="/#/order/list">我的订单</a>
           <a href="javascript:;" class="my-cart" @click="goToCart"
             ><span class="icon-cart"></span>购物车</a
           >
@@ -84,29 +85,41 @@ export default {
   },
   mounted() {
     this.getProductList();
+    let params = this.$route.params;
+    if (params && params.from == "login") {
+      this.getCartCount();
+    }
+  },
+  computed: {
+    // username() {
+    //   return this.$store.state.username;
+    // },
+    // cartCount() {
+    //   return this.$store.state.cartCount;
+    // },
+    ...mapState(["username", "cartCount"]),
   },
   methods: {
-    login(){
-       this.$router.push('/login');
+    login() {
+      this.$router.push("/login");
     },
     getProductList() {
       axios
         .get("/products", {
           params: {
             categoryId: "100012",
-            pageSize:6
+            pageSize: 6,
           },
         })
         .then((res) => {
           // console.log(res)
-         
-            this.phoneList = res.list;
-          
+
+          this.phoneList = res.list;
         });
     },
-    goToCart(){
-      this.$router.push('/cart');
-    }
+    goToCart() {
+      this.$router.push("/cart");
+    },
   },
   filters: {
     currency(val) {
@@ -209,13 +222,13 @@ export default {
             height: 0;
             opacity: 0;
             overflow: hidden;
-            transition: all .2s;
+            transition: all 0.2s;
             background-color: #ffffff;
             .product {
               float: left;
               width: 16.6%;
               height: 220px;
-text-align: center;
+              text-align: center;
               font-size: 12px;
               line-height: 12px;
               position: relative;
