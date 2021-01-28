@@ -55,6 +55,7 @@
             </div>
           </div>
           <el-pagination
+            v-if="false"
             class="pagination"
             background
             layout="prev, pager, next"
@@ -63,6 +64,24 @@
             @current-change="handleChange"
           >
           </el-pagination>
+          <div class="load-more">
+            <el-button
+              type="primary"
+              v-if="false"
+              :loading="loading"
+              @click="loadMore()"
+              >加载更多</el-button
+            >
+          </div>
+          <div
+            class="scroll-more"
+            v-infinite-scroll="scrollMore"
+            infinite-scroll-disabled="busy"
+            infinite-scroll-distance="410"
+          >
+            <img src="/imgs/loading-svg/loading-spinning-bubbles.svg" alt="" />
+          </div>
+
           <no-data v-if="!loading && list.length == 0"></no-data>
         </div>
       </div>
@@ -73,8 +92,9 @@
 import OrderHeader from "./../components/Order-Header";
 import Loading from "./../components/Loading";
 import NoData from "./../components/NoData";
-import { Pagination } from "element-ui";
+import { Pagination, Button } from "element-ui";
 import axios from "axios";
+import infiniteScroll from "vue-infinite-scroll";
 export default {
   name: "order-list",
   components: {
@@ -82,14 +102,17 @@ export default {
     Loading,
     NoData,
     [Pagination.name]: Pagination,
+    [Button.name]: Button,
   },
+  directives: { infiniteScroll },
   data() {
     return {
-      loading: true,
+      loading: false,
       list: [],
-      pageSize: 10, //每页页数
+      pageSize: 2, //每页页数
       pageNum: 1, //当前页
       total: 0, //总条数
+      busy: false, //默认不触发滚动
     };
   },
   mounted() {
@@ -97,20 +120,52 @@ export default {
   },
   methods: {
     getOrderList() {
+      this.loading = true;
+      this.busy = true;
       axios
         .get("/orders", {
           params: {
             pageNum: this.pageNum,
+            pageSize: 10,
           },
         })
         .then((res) => {
+          this.busy = false;
           this.loading = false;
-          this.list = res.list;
+          this.list = this.list.concat(res.list);
           this.total = res.total;
         })
         .catch(() => {
           this.loading = false;
         });
+    },
+    //专门给scrollMore使用
+    getList() {
+      this.loading = true;
+      axios
+        .get("/orders", {
+          params: {
+            pageNum: this.pageNum,
+            pageSize: 10,
+          },
+        })
+        .then((res) => {
+          this.list = this.list.concat(res.list);
+          this.loading = false;
+          if (res.hasNextPage) {
+            this.busy = false;
+          } else {
+            this.busy = true;
+          }
+        });
+    },
+    //第三种分页方法滑动加载
+    scrollMore() {
+      this.busy = true;
+      setTimeout(() => {
+        this.pageNum++;
+        this.getList();
+      }, 500);
     },
     goPay(orderNo) {
       // 三种路由跳转方式
@@ -128,6 +183,12 @@ export default {
         },
       });
     },
+    //第二种分页方法点击button
+    loadMore() {
+      this.pageNum++;
+      this.getOrderList();
+    },
+    //第一种分页方法小方格
     handleChange(pageNum) {
       console.log(pageNum);
       this.pageNum = pageNum;
@@ -204,6 +265,10 @@ export default {
       .el-pagination.is-background .el-pager li:not(.disabled).active {
         background-color: #ff6600;
         color: #fff;
+      }
+      .load-more,
+      .scroll-more {
+        text-align: center;
       }
     }
   }

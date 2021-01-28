@@ -14,7 +14,7 @@
           <a href="javascript:;" v-if="username" @click="logout">退出</a>
           <a href="/#/order/list">我的订单</a>
           <a href="javascript:;" class="my-cart" @click="goToCart"
-            ><span class="icon-cart"></span>购物车</a
+            ><span class="icon-cart"></span>购物车({{ cartCount }})</a
           >
         </div>
       </div>
@@ -36,7 +36,7 @@
                 >
                   <a :href="'/#/product/' + item.id" target="_blank">
                     <div class="pro-img">
-                      <img :src="item.mainImage" alt="item.subtitle" />
+                      <img v-lazy="item.mainImage" alt="item.subtitle" />
                     </div>
                     <div class="pro-name">{{ item.name }}</div>
                     <div class="pro-price">{{ item.price | currency }}</div>
@@ -54,7 +54,52 @@
               <li class="product">
                 <a href="" target="_blank">
                   <div class="pro-img">
-                    <img src="/imgs/item-box-3.jpg" alt="" />
+                    <img v-lazy="'/imgs/item-box-3.jpg'" alt="" />
+                  </div>
+                  <div class="pro-name">小米至尊</div>
+                  <div class="pro-price">1799元</div>
+                </a>
+              </li>
+              <li class="product">
+                <a href="" target="_blank">
+                  <div class="pro-img">
+                    <img v-lazy="'/imgs/item-box-3.jpg'" alt="" />
+                  </div>
+                  <div class="pro-name">小米至尊</div>
+                  <div class="pro-price">1799元</div>
+                </a>
+              </li>
+              <li class="product">
+                <a href="" target="_blank">
+                  <div class="pro-img">
+                    <img v-lazy="'/imgs/item-box-3.jpg'" alt="" />
+                  </div>
+                  <div class="pro-name">小米至尊</div>
+                  <div class="pro-price">1799元</div>
+                </a>
+              </li>
+              <li class="product">
+                <a href="" target="_blank">
+                  <div class="pro-img">
+                    <img v-lazy="'/imgs/item-box-3.jpg'" alt="" />
+                  </div>
+                  <div class="pro-name">小米至尊</div>
+                  <div class="pro-price">1799元</div>
+                </a>
+              </li>
+              <li class="product">
+                <a href="" target="_blank">
+                  <div class="pro-img">
+                    <img v-lazy="'/imgs/item-box-3.jpg'" alt="" />
+                  </div>
+                  <div class="pro-name">小米至尊</div>
+                  <div class="pro-price">1799元</div>
+                </a>
+              </li>
+              <li class="product">
+                <a href="" target="_blank">
+                  <div class="pro-img">
+                    <img v-lazy="'/imgs/item-box-3.jpg'" alt="" />
                   </div>
                   <div class="pro-name">小米至尊</div>
                   <div class="pro-price">1799元</div>
@@ -75,11 +120,11 @@
 </template>
 <script>
 import axios from "axios";
+import { mapState } from "vuex";
 export default {
   name: "nav-header",
   data() {
     return {
-      username: "",
       phoneList: [],
     };
   },
@@ -102,6 +147,19 @@ export default {
   methods: {
     login() {
       this.$router.push("/login");
+    },
+    logout() {
+      axios.post("/user/logout").then(() => {
+        this.$message.success("退出成功");
+        this.$store.dispatch("saveUserName", "");
+        this.$store.dispatch("saveCartCount", 0);
+        this.$cookie.set("userId", "", { expires: "-1" });
+      });
+    },
+    getCartCount() {
+      axios.get("/carts/products/sum").then((res = 0) => {
+        this.$store.dispatch("saveCartCount", res);
+      });
     },
     getProductList() {
       axios
@@ -163,33 +221,7 @@ export default {
       position: relative;
       height: 112px;
       @include flex();
-      .header-logo {
-        display: inline-block;
-        width: 55px;
-        height: 55px;
-        background-color: #ff6600;
-        a {
-          display: inline-block;
-          width: 110px;
-          height: 55px;
-          &:before {
-            content: "";
-            @include bgImg(55px, 55px, "/imgs/mi-logo.png", 55px);
-            transition: margin 0.2s;
-          }
-          &:after {
-            content: "";
 
-            @include bgImg(55px, 55px, "/imgs/mi-home.png", 55px);
-
-            transition: margin 0.2s;
-          }
-          &:hover:before {
-            margin-left: -55px;
-            transition: margin 0.2s;
-          }
-        }
-      }
       .header-menu {
         display: inline-block;
         width: 643px;

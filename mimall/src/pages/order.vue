@@ -1,6 +1,7 @@
 <template>
   <div>
     <router-view></router-view>
+    <service-bar></service-bar>
     <nav-footer></nav-footer>
   </div>
 </template>
