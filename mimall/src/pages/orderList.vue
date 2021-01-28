@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <div class="order-list">
     <order-header title="订单列表">
       <template v-slot:tip>
@@ -272,5 +273,15 @@ export default {
       }
     }
   }
+=======
+    <div>orderlist</div>
+</template>
+<script>
+export default {
+    name:'order-list'
+>>>>>>> parent of 2790712... 完成第一版的分页，点击切换分页
 }
+</script>
+<style  scoped>
+
 </style>
