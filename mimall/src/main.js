@@ -7,6 +7,7 @@ import VueCookie from 'vue-cookie'
 import { Message } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
+//
 // const mock=true;
 // if(mock)
 // {
