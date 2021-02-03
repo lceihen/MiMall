@@ -29,6 +29,7 @@ export default {
 @import "./../assets/scss/config.scss";
 @import "./../assets/scss/mixin.scss";
 .scan {
+  z-index: 10;
   position: absolute;
   top: 0;
   width: 100%;
